@@ -8,5 +8,6 @@ AC_CONFIG_FILES([
  src/Makefile
  demo/Makefile
  demo/LINUX/Makefile
+ demo/LINUXMASTER/Makefile
 ])
 AC_OUTPUT

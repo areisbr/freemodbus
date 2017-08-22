@@ -25,28 +25,55 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * File: $Id: mbrtu.h,v 1.9 2006/12/07 22:10:34 wolti Exp $
+ * File: $Id: mbfuncinput.c,v 1.10 2007/09/12 10:15:56 wolti Exp $
  */
+#include <stdio.h>
 
-#ifndef _MB_RTU_H
-#define _MB_RTU_H
+#include "port.h"
 
-#ifdef __cplusplus
-PR_BEGIN_EXTERN_C
-#endif
-    eMBErrorCode eMBRTUInit( UCHAR slaveAddress, UCHAR ucPort, ULONG ulBaudRate,
-                             eMBParity eParity );
-void            eMBRTUStart( void );
-void            eMBRTUStop( void );
-void            vMBRTUGetBuffer ( UCHAR ** ppucFrame );
-eMBErrorCode    eMBRTUReceive( UCHAR * pucRcvAddress, UCHAR ** pucFrame, USHORT * pusLength );
-eMBErrorCode    eMBRTUSend( UCHAR slaveAddress, const UCHAR * pucFrame, USHORT usLength );
-BOOL            xMBRTUReceiveFSM( void );
-BOOL            xMBRTUTransmitFSM( void );
-BOOL            xMBRTUTimerT15Expired( void );
-BOOL            xMBRTUTimerT35Expired( void );
+#include "mbmaster.h"
+#include "mbframe.h"
+#include "mbconfig.h"
+#include "mbproto.h"
+#include "mbutils.h"
 
-#ifdef __cplusplus
-PR_END_EXTERN_C
-#endif
+#define MB_PDU_FUNC_READ_REGCNT_OFF          ( MB_PDU_DATA_OFF )
+#define MB_PDU_FUNC_READ_REG_OFF             ( MB_PDU_DATA_OFF + 1 )
+#define MB_PDU_FUNC_READ_REGCNT_MAX          ( 0x007D )
+#define MB_READ_INPUT_REG_ERR                ( 0x84 )
+
+#if MB_FUNC_READ_INPUT_ENABLED > 0
+
+eMBException    prveMBError2Exception( eMBErrorCode eErrorCode );
+
+eMBException
+eMBFuncReadInputRegisterRespHandler( UCHAR * pucFrame, USHORT * usLen )
+{
+    USHORT          usRegCnt;
+    UCHAR           *pucFrameCur = NULL;
+    eMBException    eExStatus = MB_EX_NONE;
+    USHORT i, j = 0;
+
+    usRegCnt = ( USHORT ) ( pucFrame[MB_PDU_FUNC_READ_REGCNT_OFF] / 2 );
+    pucFrameCur = &pucFrame[MB_PDU_FUNC_READ_REG_OFF];
+
+    if( ( usRegCnt >= 1 ) && ( usRegCnt < MB_PDU_FUNC_READ_REGCNT_MAX ) )
+    {
+        if ( pucFrame[MB_PDU_FUNC_OFF] != MB_READ_INPUT_REG_ERR )
+        {
+            vMBReadInputRegCallback ( pucFrameCur, usRegCnt );
+        }
+        else
+        {
+            eExStatus = pucFrame[MB_PDU_FUNC_OFF + 1];
+        }
+    }
+    else
+    {
+        eExStatus = MB_EX_ILLEGAL_DATA_VALUE;
+    }
+
+    return eExStatus;
+}
+
 #endif

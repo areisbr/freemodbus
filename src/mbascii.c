@@ -148,6 +148,11 @@ eMBASCIIStop( void )
     EXIT_CRITICAL_SECTION(  );
 }
 
+void
+vMBASCIIGetBuffer( UCHAR ** ppucFrame ) {
+  *ppucFrame = ( UCHAR * ) & ucASCIIBuf[MB_SER_PDU_PDU_OFF];
+}
+
 eMBErrorCode
 eMBASCIIReceive( UCHAR * pucRcvAddress, UCHAR ** pucFrame, USHORT * pusLength )
 {

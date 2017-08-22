@@ -79,7 +79,9 @@ typedef eMBErrorCode( *peMBFrameSend ) ( UCHAR slaveAddress,
                                          const UCHAR * pucFrame,
                                          USHORT usLength );
 
-typedef void( *pvMBFrameClose ) ( void );
+typedef void    ( *pvMBFrameClose ) ( void );
+
+typedef void    ( *pvMBFrameGetBuffer ) ( UCHAR ** ppucFrame );
 
 #ifdef __cplusplus
 PR_END_EXTERN_C

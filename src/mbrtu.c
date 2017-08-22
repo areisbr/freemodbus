@@ -147,6 +147,11 @@ eMBRTUStop( void )
     EXIT_CRITICAL_SECTION(  );
 }
 
+void
+vMBRTUGetBuffer( UCHAR ** ppucFrame ) {
+    *ppucFrame = ( UCHAR * ) & ucRTUBuf[MB_SER_PDU_PDU_OFF];
+}
+
 eMBErrorCode
 eMBRTUReceive( UCHAR * pucRcvAddress, UCHAR ** pucFrame, USHORT * pusLength )
 {

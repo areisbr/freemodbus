@@ -128,6 +128,15 @@ am_libfreemodbus_a_OBJECTS = mbutils.$(OBJEXT) mbascii.$(OBJEXT) \
 	mbfuncdisc.$(OBJEXT) mbfuncholding.$(OBJEXT) \
 	mbfuncinput.$(OBJEXT) mbfuncother.$(OBJEXT) mb.$(OBJEXT)
 libfreemodbus_a_OBJECTS = $(am_libfreemodbus_a_OBJECTS)
+libfreemodbus_m_a_AR = $(AR) $(ARFLAGS)
+libfreemodbus_m_a_LIBADD =
+am_libfreemodbus_m_a_OBJECTS = mbutils.$(OBJEXT) mbascii.$(OBJEXT) \
+	mbcrc.$(OBJEXT) mbrtu.$(OBJEXT) mbtcp.$(OBJEXT) \
+	mbfuncdiag.$(OBJEXT) mbmasterfunccoils.$(OBJEXT) \
+	mbmasterfuncdisc.$(OBJEXT) mbmasterfuncholding.$(OBJEXT) \
+	mbmasterfuncinput.$(OBJEXT) mbmasterfuncother.$(OBJEXT) \
+	mbmaster.$(OBJEXT)
+libfreemodbus_m_a_OBJECTS = $(am_libfreemodbus_m_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -156,8 +165,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libfreemodbus_a_SOURCES)
-DIST_SOURCES = $(libfreemodbus_a_SOURCES)
+SOURCES = $(libfreemodbus_a_SOURCES) $(libfreemodbus_m_a_SOURCES)
+DIST_SOURCES = $(libfreemodbus_a_SOURCES) $(libfreemodbus_m_a_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -270,21 +279,35 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -I${top_src}/src -I../demo/LINUX
-lib_LIBRARIES = libfreemodbus.a
+AM_CPPFLAGS = -I${top_srcdir}/src -I${top_srcdir}/demo/LINUX
+lib_LIBRARIES = libfreemodbus.a libfreemodbus_m.a
+libfreemodbus_m_a_SOURCES = \
+	mbutils.c \
+	mbascii.c \
+	mbcrc.c \
+	mbrtu.c \
+	mbtcp.c \
+	mbfuncdiag.c \
+	mbmasterfunccoils.c \
+	mbmasterfuncdisc.c \
+	mbmasterfuncholding.c \
+	mbmasterfuncinput.c \
+	mbmasterfuncother.c \
+	mbmaster.c
+
 libfreemodbus_a_SOURCES = \
-													mbutils.c \
-													mbascii.c \
-													mbcrc.c \
-													mbrtu.c \
-													mbtcp.c \
-													mbfunccoils.c \
-													mbfuncdiag.c \
-													mbfuncdisc.c \
-													mbfuncholding.c \
-													mbfuncinput.c \
-													mbfuncother.c \
-													mb.c
+	mbutils.c \
+	mbascii.c \
+	mbcrc.c \
+	mbrtu.c \
+	mbtcp.c \
+	mbfunccoils.c \
+	mbfuncdiag.c \
+	mbfuncdisc.c \
+	mbfuncholding.c \
+	mbfuncinput.c \
+	mbfuncother.c \
+	mb.c
 
 all: all-am
 
@@ -357,6 +380,11 @@ libfreemodbus.a: $(libfreemodbus_a_OBJECTS) $(libfreemodbus_a_DEPENDENCIES) $(EX
 	$(AM_V_AR)$(libfreemodbus_a_AR) libfreemodbus.a $(libfreemodbus_a_OBJECTS) $(libfreemodbus_a_LIBADD)
 	$(AM_V_at)$(RANLIB) libfreemodbus.a
 
+libfreemodbus_m.a: $(libfreemodbus_m_a_OBJECTS) $(libfreemodbus_m_a_DEPENDENCIES) $(EXTRA_libfreemodbus_m_a_DEPENDENCIES) 
+	$(AM_V_at)-rm -f libfreemodbus_m.a
+	$(AM_V_AR)$(libfreemodbus_m_a_AR) libfreemodbus_m.a $(libfreemodbus_m_a_OBJECTS) $(libfreemodbus_m_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libfreemodbus_m.a
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
@@ -372,6 +400,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mbfuncholding.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mbfuncinput.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mbfuncother.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mbmaster.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mbmasterfunccoils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mbmasterfuncdisc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mbmasterfuncholding.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mbmasterfuncinput.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mbmasterfuncother.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mbrtu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mbtcp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mbutils.Po@am__quote@

@@ -50,7 +50,7 @@ PR_BEGIN_EXTERN_C
 #define MB_ASCII_ENABLED                        (  1 )
 
 /*! \brief If Modbus RTU support is enabled. */
-#define MB_RTU_ENABLED                          (  1 )
+#define MB_RTU_ENABLED                          (  0 )
 
 /*! \brief If Modbus TCP support is enabled. */
 #define MB_TCP_ENABLED                          (  0 )
@@ -73,7 +73,7 @@ PR_BEGIN_EXTERN_C
  * receiver then he will not receive the response correctly.
  */
 #ifndef MB_ASCII_TIMEOUT_WAIT_BEFORE_SEND_MS
-#define MB_ASCII_TIMEOUT_WAIT_BEFORE_SEND_MS    ( 0 )
+#define MB_ASCII_TIMEOUT_WAIT_BEFORE_SEND_MS    (  0 )
 #endif
 
 /*! \brief Maximum number of Modbus functions codes the protocol stack

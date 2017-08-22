@@ -40,6 +40,7 @@ eMBErrorCode    eMBASCIIInit( UCHAR slaveAddress, UCHAR ucPort,
                               ULONG ulBaudRate, eMBParity eParity );
 void            eMBASCIIStart( void );
 void            eMBASCIIStop( void );
+void            vMBASCIIGetBuffer( UCHAR ** ppucFrame );
 
 eMBErrorCode    eMBASCIIReceive( UCHAR * pucRcvAddress, UCHAR ** pucFrame,
                                  USHORT * pusLength );

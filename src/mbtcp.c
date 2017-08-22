@@ -101,6 +101,11 @@ eMBTCPStop( void )
     vMBTCPPortDisable( );
 }
 
+void
+eMBTCPGetBuffer( UCHAR ** ppucFrame ) {
+    *ppucFrame = NULL;
+}
+
 eMBErrorCode
 eMBTCPReceive( UCHAR * pucRcvAddress, UCHAR ** ppucFrame, USHORT * pusLength )
 {

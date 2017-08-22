@@ -4423,7 +4423,7 @@ else
   RANLIB="$ac_cv_prog_RANLIB"
 fi
 
-ac_config_files="$ac_config_files Makefile src/Makefile demo/Makefile demo/LINUX/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile demo/Makefile demo/LINUX/Makefile demo/LINUXMASTER/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -5175,6 +5175,7 @@ do
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "demo/Makefile") CONFIG_FILES="$CONFIG_FILES demo/Makefile" ;;
     "demo/LINUX/Makefile") CONFIG_FILES="$CONFIG_FILES demo/LINUX/Makefile" ;;
+    "demo/LINUXMASTER/Makefile") CONFIG_FILES="$CONFIG_FILES demo/LINUXMASTER/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

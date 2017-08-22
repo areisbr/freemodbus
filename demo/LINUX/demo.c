@@ -27,6 +27,7 @@
 #include <errno.h>
 #include <pthread.h>
 #include <signal.h>
+#include <time.h>
 
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
@@ -109,7 +110,7 @@ main( int argc, char *argv[] )
         fprintf( stderr, "%s: can't install signal handlers: %s!\n", PROG, strerror( errno ) );
         iExitCode = EXIT_FAILURE;
     }
-    else if( eMBInit( MB_RTU, 0x0A, 0, 38400, MB_PAR_EVEN ) != MB_ENOERR )
+    else if( eMBInit( MB_ASCII, 0x0A, 0, 38400, MB_PAR_EVEN ) != MB_ENOERR )
     {
         fprintf( stderr, "%s: can't initialize modbus stack!\n", PROG );
         iExitCode = EXIT_FAILURE;
@@ -221,6 +222,8 @@ void           *
 pvPollingThread( void *pvParameter )
 {
     vSetPollingThreadState( RUNNING );
+    time_t now;
+    struct tm time_s;
 
     if( eMBEnable(  ) == MB_ENOERR )
     {
@@ -228,7 +231,10 @@ pvPollingThread( void *pvParameter )
         {
             if( eMBPoll(  ) != MB_ENOERR )
                 break;
-            usRegInputBuf[0] = ( USHORT ) rand(  );
+            now = time(NULL);
+            localtime_r(&now, &time_s);
+            usRegInputBuf[0] = ( USHORT ) ( time_s.tm_min * 100);
+            usRegInputBuf[0] += ( USHORT ) ( time_s.tm_sec );
         }
         while( eGetPollingThreadState(  ) != SHUTDOWN );
     }

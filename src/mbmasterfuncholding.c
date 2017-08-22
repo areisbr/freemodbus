@@ -25,28 +25,50 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * File: $Id: mbrtu.h,v 1.9 2006/12/07 22:10:34 wolti Exp $
+ * File: $Id: mbfuncholding.c,v 1.12 2007/02/18 23:48:22 wolti Exp $
  */
 
-#ifndef _MB_RTU_H
-#define _MB_RTU_H
+#include "port.h"
 
-#ifdef __cplusplus
-PR_BEGIN_EXTERN_C
-#endif
-    eMBErrorCode eMBRTUInit( UCHAR slaveAddress, UCHAR ucPort, ULONG ulBaudRate,
-                             eMBParity eParity );
-void            eMBRTUStart( void );
-void            eMBRTUStop( void );
-void            vMBRTUGetBuffer ( UCHAR ** ppucFrame );
-eMBErrorCode    eMBRTUReceive( UCHAR * pucRcvAddress, UCHAR ** pucFrame, USHORT * pusLength );
-eMBErrorCode    eMBRTUSend( UCHAR slaveAddress, const UCHAR * pucFrame, USHORT usLength );
-BOOL            xMBRTUReceiveFSM( void );
-BOOL            xMBRTUTransmitFSM( void );
-BOOL            xMBRTUTimerT15Expired( void );
-BOOL            xMBRTUTimerT35Expired( void );
+#include "mbmaster.h"
+#include "mbconfig.h"
 
-#ifdef __cplusplus
-PR_END_EXTERN_C
+#if MB_FUNC_WRITE_HOLDING_ENABLED > 0
+
+eMBException
+eMBFuncWriteHoldingRegisterRespHandler( UCHAR * pucFrame, USHORT * usLen )
+{
+    return MB_EX_NONE;
+}
+
 #endif
+
+#if MB_FUNC_WRITE_MULTIPLE_HOLDING_ENABLED > 0
+
+eMBException
+eMBFuncWriteMultipleHoldingRegisterRespHandler( UCHAR * pucFrame, USHORT * usLen )
+{
+    return MB_EX_NONE;
+}
+
+#endif
+
+#if MB_FUNC_READ_HOLDING_ENABLED > 0
+
+eMBException
+eMBFuncReadHoldingRegisterRespHandler( UCHAR * pucFrame, USHORT * usLen )
+{
+    return MB_EX_NONE;
+}
+
+#endif
+
+#if MB_FUNC_READWRITE_HOLDING_ENABLED > 0
+
+eMBException
+eMBFuncReadWriteMultipleHoldingRegisterRespHandler( UCHAR * pucFrame, USHORT * usLen )
+{
+    return MB_EX_NONE;
+}
+
 #endif
