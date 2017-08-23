@@ -8,7 +8,19 @@ void vMBReadInputRegCallback ( const UCHAR *cpucBuffer, USHORT usRegCnt ) {
     const UCHAR *pucBufferCur = NULL;
     unsigned short val;
 
-    printf("Reading %d registers:\n", usRegCnt);
+    printf("Reading %d input registers:\n", usRegCnt);
+    for (pucBufferCur = cpucBuffer; (pucBufferCur - cpucBuffer) != usRegCnt * 2;) {
+        val = *pucBufferCur++ << 8;
+        val |= *pucBufferCur++ & 0xFF;
+        printf(" %hu\n", val);
+    }
+}
+
+void vMBReadHoldingRegCallback ( const UCHAR *cpucBuffer, USHORT usRegCnt ) {
+    const UCHAR *pucBufferCur = NULL;
+    unsigned short val;
+
+    printf("Reading %d holding registers:\n", usRegCnt);
     for (pucBufferCur = cpucBuffer; (pucBufferCur - cpucBuffer) != usRegCnt * 2;) {
         val = *pucBufferCur++ << 8;
         val |= *pucBufferCur++ & 0xFF;
@@ -22,6 +34,10 @@ int main(int argc, char *argv[]) {
     if (eMBEnable() != MB_ENOERR) return 2;
     for (;;) {
         if (eMBReadInputReg(0x0A, 1000, 4) != MB_ENOERR) {
+            continue;
+        }
+        eMBPoll();
+        if (eMBReadOutputReg(0x0A, 2000, 10) != MB_ENOERR) {
             continue;
         }
         eMBPoll();

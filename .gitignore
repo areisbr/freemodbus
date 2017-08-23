@@ -1,3 +1,9 @@
 autom4te.cache
 *.sw[a-z]
+*.a
+*.o
+.deps
+Makefile
+config.status
+config.log
 

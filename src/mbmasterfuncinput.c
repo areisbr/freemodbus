@@ -35,33 +35,27 @@
 #include "mbframe.h"
 #include "mbconfig.h"
 #include "mbproto.h"
-#include "mbutils.h"
 
+#define MB_PDU_FUNC_READ_DATA_OFF            ( MB_PDU_DATA_OFF + 1 )
 #define MB_PDU_FUNC_READ_REGCNT_OFF          ( MB_PDU_DATA_OFF )
-#define MB_PDU_FUNC_READ_REG_OFF             ( MB_PDU_DATA_OFF + 1 )
 #define MB_PDU_FUNC_READ_REGCNT_MAX          ( 0x007D )
-#define MB_READ_INPUT_REG_ERR                ( 0x84 )
+#define MB_READ_INPUT_REG_EXCEPTION          ( 0x84 )
 
 #if MB_FUNC_READ_INPUT_ENABLED > 0
-
-eMBException    prveMBError2Exception( eMBErrorCode eErrorCode );
 
 eMBException
 eMBFuncReadInputRegisterRespHandler( UCHAR * pucFrame, USHORT * usLen )
 {
     USHORT          usRegCnt;
-    UCHAR           *pucFrameCur = NULL;
     eMBException    eExStatus = MB_EX_NONE;
-    USHORT i, j = 0;
 
     usRegCnt = ( USHORT ) ( pucFrame[MB_PDU_FUNC_READ_REGCNT_OFF] / 2 );
-    pucFrameCur = &pucFrame[MB_PDU_FUNC_READ_REG_OFF];
 
     if( ( usRegCnt >= 1 ) && ( usRegCnt < MB_PDU_FUNC_READ_REGCNT_MAX ) )
     {
-        if ( pucFrame[MB_PDU_FUNC_OFF] != MB_READ_INPUT_REG_ERR )
+        if ( pucFrame[MB_PDU_FUNC_OFF] != MB_READ_INPUT_REG_EXCEPTION )
         {
-            vMBReadInputRegCallback ( pucFrameCur, usRegCnt );
+            vMBReadInputRegCallback ( &pucFrame[MB_PDU_FUNC_READ_DATA_OFF], usRegCnt );
         }
         else
         {

@@ -28,10 +28,19 @@
  * File: $Id: mbfuncholding.c,v 1.12 2007/02/18 23:48:22 wolti Exp $
  */
 
+#include <stdio.h>
+
 #include "port.h"
 
 #include "mbmaster.h"
 #include "mbconfig.h"
+#include "mbframe.h"
+#include "mbproto.h"
+
+#define MB_PDU_FUNC_READ_DATA_OFF               ( MB_PDU_DATA_OFF + 1 )
+#define MB_PDU_FUNC_READ_REGCNT_OFF             ( MB_PDU_DATA_OFF )
+#define MB_PDU_FUNC_READ_REGCNT_MAX             ( 0x007D )
+#define MB_READ_HOLDING_REG_EXCEPTION           ( 0x83 )
 
 #if MB_FUNC_WRITE_HOLDING_ENABLED > 0
 
@@ -58,7 +67,28 @@ eMBFuncWriteMultipleHoldingRegisterRespHandler( UCHAR * pucFrame, USHORT * usLen
 eMBException
 eMBFuncReadHoldingRegisterRespHandler( UCHAR * pucFrame, USHORT * usLen )
 {
-    return MB_EX_NONE;
+    USHORT          usRegCnt;
+    eMBException    eExStatus = MB_EX_NONE;
+
+    usRegCnt = ( USHORT ) ( pucFrame[MB_PDU_FUNC_READ_REGCNT_OFF] / 2 );
+
+    if( ( usRegCnt >= 1 ) && ( usRegCnt < MB_PDU_FUNC_READ_REGCNT_MAX ) )
+    {
+        if ( pucFrame[MB_PDU_FUNC_OFF] != MB_READ_HOLDING_REG_EXCEPTION )
+        {
+            vMBReadHoldingRegCallback ( &pucFrame[MB_PDU_FUNC_READ_DATA_OFF], usRegCnt );
+        }
+        else
+        {
+            eExStatus = pucFrame[MB_PDU_FUNC_OFF + 1];
+        }
+    }
+    else
+    {
+        eExStatus = MB_EX_ILLEGAL_DATA_VALUE;
+    }
+
+    return eExStatus;
 }
 
 #endif
