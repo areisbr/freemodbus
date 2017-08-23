@@ -29,6 +29,7 @@ void vMBReadHoldingRegCallback ( const UCHAR *cpucBuffer, USHORT usRegCnt ) {
 }
 
 int main(int argc, char *argv[]) {
+     unsigned short v_array[] = { 1, 2, 3, 4, 5, 6, 7, 8 };
     
     if (eMBInit(MB_ASCII, 1, 38400, MB_PAR_EVEN) != MB_ENOERR) return 2;
     if (eMBEnable() != MB_ENOERR) return 2;
@@ -37,7 +38,19 @@ int main(int argc, char *argv[]) {
             continue;
         }
         eMBPoll();
-        if (eMBReadOutputReg(0x0A, 2000, 10) != MB_ENOERR) {
+
+        if (eMBWriteMultRegister(0x0A, 2000, 8, v_array) != MB_ENOERR) {
+            continue;
+        }
+        if (eMBReadOutputReg(0x0A, 2000, 8) != MB_ENOERR) {
+            continue;
+        }
+        eMBPoll();
+
+        if (eMBWriteRegister(0x0A, 2000, 321) != MB_ENOERR) {
+            continue;
+        }
+        if (eMBReadOutputReg(0x0A, 2000, 1) != MB_ENOERR) {
             continue;
         }
         eMBPoll();

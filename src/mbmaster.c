@@ -375,11 +375,6 @@ eMBReadInputReg( UCHAR ucId, USHORT usStartAddr, USHORT usLen )
         return MB_EILLSTATE;
     }
 
-    if (usStartAddr <= 0 || usStartAddr > 10000) 
-    {
-        return MB_EINVAL;
-    }
-
     pucFrameCur = &pucFrame[MB_PDU_FUNC_OFF];
     *pucFrameCur++ = MB_FUNC_READ_INPUT_REGISTER;
     usStartAddr--;
@@ -416,11 +411,6 @@ eMBReadOutputReg( UCHAR ucId, USHORT usStartAddr, USHORT usLen )
         return MB_EILLSTATE;
     }
 
-    if (usStartAddr <= 0 || usStartAddr > 10000) 
-    {
-        return MB_EINVAL;
-    }
-
     pucFrameCur = &pucFrame[MB_PDU_FUNC_OFF];
     *pucFrameCur++ = MB_FUNC_READ_HOLDING_REGISTER;
     usStartAddr--;
@@ -440,23 +430,85 @@ eMBReadOutputReg( UCHAR ucId, USHORT usStartAddr, USHORT usLen )
 }
 
 eMBErrorCode
-eMBWriteRegister( UCHAR ucId, USHORT usAddr, const USHORT cusData )
+eMBWriteRegister( UCHAR ucId, USHORT usStartAddr, const USHORT cusData )
 {
+    eMBErrorCode eStatus = MB_ENOERR;
+    UCHAR *pucFrame = NULL, *pucFrameCur = NULL;
+    ucMBAddress = ucId;
+
     if( eMBState != STATE_ENABLED )
     {
         return MB_EILLSTATE;
     }
-    return MB_ENOERR;
+
+    pvMBFrameGetBufferCur( & pucFrame );
+    if( pucFrame == NULL )
+    {
+        return MB_EILLSTATE;
+    }
+
+    pucFrameCur = &pucFrame[MB_PDU_FUNC_OFF];
+    *pucFrameCur++ = MB_FUNC_WRITE_REGISTER;
+    usStartAddr--;
+    *pucFrameCur++ = ( UCHAR ) ( usStartAddr >> 8 );
+    *pucFrameCur++ = ( UCHAR ) ( usStartAddr & 0xFF );
+    *pucFrameCur++ = ( UCHAR ) ( cusData >> 8 );
+    *pucFrameCur++ = ( UCHAR ) ( cusData & 0xFF );
+    if( peMBFrameSendCur( ucId, pucFrame, pucFrameCur - pucFrame ) != MB_ENOERR )
+    {
+        return MB_EIO;
+    }
+
+    eStatus = xMBPortSerialPoll( ) ? MB_ENOERR : MB_EIO ;
+    eMBPoll( );
+    return eStatus;
 }
 
 eMBErrorCode
-eMBWriteMultRegister( UCHAR ucId, USHORT usStartAddr, USHORT usLen, const USHORT *cusData )
+eMBWriteMultRegister( UCHAR ucId, USHORT usStartAddr, USHORT usNReg, const USHORT *cusData )
 {
+    eMBErrorCode eStatus = MB_ENOERR;
+    UCHAR *pucFrame = NULL, *pucFrameCur = NULL;
+    ucMBAddress = ucId;
+    int i;
+
+    if( usNReg > 0x7B ) {
+        return MB_EINVAL;
+    }
+
     if( eMBState != STATE_ENABLED )
     {
         return MB_EILLSTATE;
     }
-    return MB_ENOERR;
+
+    pvMBFrameGetBufferCur( & pucFrame );
+    if( pucFrame == NULL )
+    {
+        return MB_EILLSTATE;
+    }
+
+    pucFrameCur = &pucFrame[MB_PDU_FUNC_OFF];
+    *pucFrameCur++ = MB_FUNC_WRITE_MULTIPLE_REGISTERS;
+    usStartAddr--;
+    *pucFrameCur++ = ( UCHAR ) ( usStartAddr >> 8 );
+    *pucFrameCur++ = ( UCHAR ) ( usStartAddr & 0xFF );
+    *pucFrameCur++ = ( UCHAR ) ( usNReg >> 8 );
+    *pucFrameCur++ = ( UCHAR ) ( usNReg & 0xFF );
+    *pucFrameCur++ = ( UCHAR ) ( usNReg * 2 );
+    for ( i = 0; i != usNReg; ++i ) {
+      *pucFrameCur++ = ( UCHAR ) ( cusData[i] >> 8 );
+      *pucFrameCur++ = ( UCHAR ) ( cusData[i] & 0xFF );
+    }
+
+    if( peMBFrameSendCur( ucId, pucFrame, pucFrameCur - pucFrame ) != MB_ENOERR )
+    {
+        return MB_EIO;
+    }
+
+    eStatus = xMBPortSerialPoll( ) ? MB_ENOERR : MB_EIO ;
+    eMBPoll( );
+
+    return eStatus;
 }
 
 
